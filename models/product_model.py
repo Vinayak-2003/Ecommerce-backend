@@ -1,7 +1,6 @@
-from pydantic import BaseModel, UUID4
 from datetime import datetime
-from uuid import uuid4
 from enum import Enum
+from pydantic import BaseModel, UUID4
 
 class ProductStatus(str, Enum):
     Active = "Active"
@@ -16,6 +15,11 @@ class Currency(str, Enum):
     Yen = "YEN"
     Ruble = "RUSSIAN RUBLE"
 
+class Category(str, Enum):
+    Men = "Men"
+    Women = "Women"
+    Kids = "Kids"
+
 class ProductUpdate(BaseModel):
     product_name: str | None = None
     description: str | None = None
@@ -25,7 +29,7 @@ class ProductUpdate(BaseModel):
     available_quantity: int | None = None
     status: ProductStatus | None = None
     brand_id: UUID4 | None = None
-    category_id: UUID4 | None = None
+    category: Category | None = None
 
 class ProductCreate(BaseModel):
     product_name: str
@@ -36,7 +40,7 @@ class ProductCreate(BaseModel):
     available_quantity: int
     status: ProductStatus
     brand_id: UUID4
-    category_id: UUID4
+    category: Category
 
 class ProductOut(ProductCreate):
     product_id: UUID4

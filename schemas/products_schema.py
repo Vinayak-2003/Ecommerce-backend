@@ -1,8 +1,9 @@
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, String, Integer, Float, TIMESTAMP, func
 from enum import Enum
 from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
+from uuid import uuid4
 
 Base = declarative_base()
 
@@ -19,10 +20,15 @@ class Currency(str, Enum):
     Yen = "YEN"
     Ruble = "RUSSIAN RUBLE"
 
+class Category(str, Enum):
+    Men = "Men"
+    Women = "Women"
+    Kids = "Kids"
+
 class Products(Base):
     __tablename__ = 'products'
 
-    product_id = Column(UUID(as_uuid=True), primary_key=True)
+    product_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
     product_name = Column(String(50), nullable=False)
     description = Column(String(200), nullable=False)
     price = Column(Float, nullable=False)
@@ -35,5 +41,5 @@ class Products(Base):
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     brand_id = Column(UUID(as_uuid=True), nullable=False)
-    category_id = Column(UUID(as_uuid=True), nullable=False)
+    category = Column(SQLEnum(Category), nullable=False)
 

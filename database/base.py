@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine, text
-from config import get_settings
 from sqlalchemy.orm import sessionmaker
+from config import get_settings
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
 
 settings = get_settings()
 
@@ -19,7 +22,7 @@ def get_ecommercebackend_db_conn():
         # test database connection
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        print(f"Database connected successfully !!")
+        print("Database connected successfully !!")
         return engine
     except Exception as e:
         print(f"Database connection failed: {e}")
@@ -27,8 +30,9 @@ def get_ecommercebackend_db_conn():
 
 
 def get_db_session():
-    db = sessionmaker(bind=get_ecommercebackend_db_conn())
+    Session = sessionmaker(bind=get_ecommercebackend_db_conn())
+    session = Session()
     try:
-        yield db
+        yield session
     finally:
-        db.close()
+        session.close()
