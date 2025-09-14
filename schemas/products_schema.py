@@ -1,11 +1,9 @@
-from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, String, Integer, Float, TIMESTAMP, func
 from enum import Enum
 from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
-
-Base = declarative_base()
+from database.base import Base
 
 class ProductStatus(str, Enum):
     Active = "Active"

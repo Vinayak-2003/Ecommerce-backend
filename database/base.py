@@ -4,7 +4,6 @@ from config import get_settings
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
-
 settings = get_settings()
 
 def get_ecommercebackend_db_conn():

@@ -17,7 +17,7 @@ from database.base import get_db_session
 product_route = APIRouter(
     prefix="/api/v1/products",
     tags=["Products"]
-    )
+)
 
 # get API routes
 @product_route.get("/all-products")
