@@ -6,7 +6,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 settings = get_settings()
 
-def get_ecommercebackend_db_conn():
+def get_ecommercedatabase_db_conn():
     try:
         engine = create_engine(
             url="postgresql://{0}:{1}@{2}:{3}/{4}".format(
@@ -29,7 +29,7 @@ def get_ecommercebackend_db_conn():
 
 
 def get_db_session():
-    Session = sessionmaker(bind=get_ecommercebackend_db_conn())
+    Session = sessionmaker(bind=get_ecommercedatabase_db_conn())
     session = Session()
     try:
         yield session

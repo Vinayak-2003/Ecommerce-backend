@@ -1,7 +1,8 @@
-from sqlalchemy import Column, String, Integer, Float, TIMESTAMP, func
+from sqlalchemy import Column, String, Integer, Float, TIMESTAMP, func, ForeignKey
 from enum import Enum
 from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from uuid import uuid4
 from database.base import Base
 
@@ -38,6 +39,7 @@ class Products(Base):
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    brand_id = Column(UUID(as_uuid=True), nullable=False)
+    brand_id = Column(UUID(as_uuid=True), ForeignKey("brands.brand_id"), nullable=False)
     category = Column(SQLEnum(Category), nullable=False)
 
+    brand = relationship("Brands", back_populates="products")
