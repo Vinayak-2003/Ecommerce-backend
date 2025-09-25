@@ -28,7 +28,7 @@ class ProductUpdate(BaseModel):
     currency: Currency | None = None
     available_quantity: int | None = None
     status: ProductStatus | None = None
-    brand_id: UUID4 | None = None
+    brand_id: str | None = None
     category: Category | None = None
 
 class ProductCreate(BaseModel):
@@ -39,7 +39,7 @@ class ProductCreate(BaseModel):
     currency: Currency
     available_quantity: int
     status: ProductStatus
-    brand_id: UUID4
+    brand_id: str
     category: Category
 
 class ProductOut(ProductCreate):

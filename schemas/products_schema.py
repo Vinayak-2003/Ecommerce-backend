@@ -39,7 +39,7 @@ class Products(Base):
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    brand_id = Column(UUID(as_uuid=True), ForeignKey("brands.brand_id"), nullable=False)
+    brand_id = Column(String, ForeignKey("brands.brand_id"), nullable=False)
     category = Column(SQLEnum(Category), nullable=False)
 
     brand = relationship("Brands", back_populates="products")
