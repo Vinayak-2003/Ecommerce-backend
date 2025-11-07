@@ -3,11 +3,11 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from database.base import get_db_session
-from model import BrandCreate
+from .model import BrandCreate
 
-from services.get_brands import fetch_all_paginated_brands
-from services.add_brand import create_brand_controller
-from services.delete_brand import delete_brand_controller
+from .services.get_brands import fetch_all_paginated_brands
+from .services.add_brand import create_brand_controller
+from .services.delete_brand import delete_brand_controller
 
 brand_route = APIRouter(
     prefix="/api/v1/brand",

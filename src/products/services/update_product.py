@@ -1,6 +1,6 @@
 from fastapi import HTTPException
-from models.product_model import ProductUpdate
-from schemas.products_schema import Products
+from ..model import ProductUpdate
+from ..schema import Products
 from sqlalchemy.orm import Session
 
 def update_product_controller(product_id, updated_product_data, db_session: Session):

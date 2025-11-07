@@ -1,5 +1,5 @@
-from models.product_model import ProductCreate
-from schemas.products_schema import Products
+from ..model import ProductCreate
+from ..schema import Products
 from sqlalchemy.orm import Session
 
 def create_new_product_controller(new_product_data: ProductCreate, db_session: Session):

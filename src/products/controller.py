@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends, Query
-from models.product_model import ProductCreate, ProductOut, ProductUpdate
+from .model import ProductCreate, ProductOut, ProductUpdate
 from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from controllers.products.add_products import create_new_product_controller
-from controllers.products.get_products import (fetch_product_by_id_controller,
+from .services.add_products import create_new_product_controller
+from .services.get_products import (fetch_product_by_id_controller,
                                                fetch_all_paginated_products, 
                                                fetch_product_by_name_customization_controller
                                             )
-from controllers.products.update_product import update_product_controller
-from controllers.products.delete_product import delete_product_controller
+from .services.update_product import update_product_controller
+from .services.delete_product import delete_product_controller
 
 from database.base import get_db_session
 

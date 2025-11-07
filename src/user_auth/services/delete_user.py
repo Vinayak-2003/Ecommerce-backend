@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from schemas.user_schema import User
+from ..schema import User
 from fastapi.responses import JSONResponse
 
 def delete_user_by_email(email: str, db_session: Session):

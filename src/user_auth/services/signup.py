@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
-from models.user_model import UserCreate, UserOut
-from schemas.user_schema import User
+from ..model import UserCreate, UserOut
+from ..schema import User
 from sqlalchemy.orm import Session
 from utilities.password_validation import get_hashed_password
 

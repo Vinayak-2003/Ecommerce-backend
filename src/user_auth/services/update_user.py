@@ -2,8 +2,8 @@ from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from jose import jwt
-from models.user_model import UserUpdate, UserRoleUpdateAdmin, UserOut
-from schemas.user_schema import User
+from ..model import UserUpdate, UserRoleUpdateAdmin, UserOut
+from ..schema import User
 from config import get_settings
 from utilities.password_validation import get_hashed_password
 

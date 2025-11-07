@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import Annotated
-from models.user_model import (UserOut, 
+from .model import (UserOut, 
                                UserCreate, 
                                UserUpdate, 
                                TokenSchema, 
@@ -11,12 +11,12 @@ from models.user_model import (UserOut,
                             )
 from database.base import get_db_session
 
-from controllers.users.signup import create_user_signup
-from controllers.users.login import user_login_controller
-from controllers.users.get_user import get_user_by_email_controller
-from controllers.users.current_user import fetch_current_user
-from controllers.users.update_user import update_current_user, update_user_role_by_admin
-from controllers.users.delete_user import delete_user_by_email
+from .services.signup import create_user_signup
+from .services.login import user_login_controller
+from .services.get_user import get_user_by_email_controller
+from .services.current_user import fetch_current_user
+from .services.update_user import update_current_user, update_user_role_by_admin
+from .services.delete_user import delete_user_by_email
 
 from utilities.rbac import require_permission
 

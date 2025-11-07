@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.user_model import UserOut
-from schemas.user_schema import User
+from ..model import UserOut
+from ..schema import User
 
 def get_user_by_email_controller(email: str, db_session: Session):
     try:

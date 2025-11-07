@@ -2,8 +2,8 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from jose import jwt
 from config import get_settings
-from schemas.user_schema import User
-from models.user_model import UserOut
+from ..schema import User
+from ..model import UserOut
 
 settings = get_settings()
 

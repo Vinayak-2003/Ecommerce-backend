@@ -1,4 +1,4 @@
-from schemas.products_schema import Products
+from ..schema import Products
 from sqlalchemy.orm import Session
 
 

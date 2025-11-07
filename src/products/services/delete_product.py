@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from schemas.products_schema import Products
+from ..schema import Products
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 
