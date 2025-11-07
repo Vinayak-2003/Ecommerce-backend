@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from schemas.brand_schema import Brands
+from ..schema import Brands
 
 def fetch_all_paginated_brands(page_no, per_page, db_session: Session):
     total_brands = db_session.query(Brands).count()

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.brand_model import BrandCreate
-from schemas.brand_schema import Brands
+from ..model import BrandCreate
+from ..schema import Brands
 
 def create_brand_controller(new_brand: BrandCreate, db_session: Session):
     try:

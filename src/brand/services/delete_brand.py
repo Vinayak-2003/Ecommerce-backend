@@ -1,6 +1,6 @@
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from schemas.brand_schema import Brands
+from ..schema import Brands
 
 def delete_brand_controller(brand_id, db_session: Session):
     try:

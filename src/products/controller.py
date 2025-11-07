@@ -19,6 +19,9 @@ product_route = APIRouter(
     tags=["Products"]
 )
 
+{"create_product", "view_product", "edit_product"},
+
+
 # get API routes
 @product_route.get("/all-products")
 def fetch_all_products(page_no: int = Query(default=1, ge=1),
