@@ -12,10 +12,10 @@ def create_access_token(subject: Union[dict, Any], expires_delta: int = None) ->
         expires_delta = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_TIME)
     
     to_encode = {
-                    "exp": expires_delta, 
-                    "sub": subject.get("sub"), 
-                    "role": subject.get("role")
-                }
+        "exp": expires_delta, 
+        "sub": subject.get("sub"), 
+        "role": subject.get("role")
+    }
     encoded_jwt = jwt.encode(claims=to_encode, key=settings.JWT_ACCESS_SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
@@ -27,9 +27,9 @@ def create_refresh_token(subject: Union[dict, Any], expires_delta: int = None) -
         expires_delta = datetime.now(timezone.utc) + timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_TIME)
     
     to_encode = {
-                    "exp": expires_delta,
-                    "sub": subject.get("sub"), 
-                    "role": subject.get("role")
-                }
+        "exp": expires_delta,
+        "sub": subject.get("sub"), 
+        "role": subject.get("role")
+    }
     encoded_jwt = jwt.encode(claims=to_encode, key=settings.JWT_REFRESH_SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt

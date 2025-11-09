@@ -2,6 +2,9 @@ from sqlalchemy.orm import Session
 from ..schema import Products
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
+from utilities.logger_middleware import get_logger
+
+logger = get_logger(__name__)
 
 def delete_product_controller(product_id, db_session: Session):
     try:
@@ -11,8 +14,9 @@ def delete_product_controller(product_id, db_session: Session):
         
         db_session.delete(stored_product)
         db_session.commit()
+        logger.info("Data with product ID {product_id} deleted successfully !!")
         return JSONResponse({"details": f"Data with product ID {product_id} deleted successfully !!"})
     except Exception as e:
         db_session.rollback()
-        print("An error raised while deleteing a product data: ", e)
+        logger.error("An error raised while deleteing a product data: ", e)
         raise e
