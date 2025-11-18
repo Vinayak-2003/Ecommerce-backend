@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, TIMESTAMP, func
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.types import Enum as SQLEnum
 from enum import Enum
@@ -25,3 +26,6 @@ class User(Base):
     user_created_time = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     user_updated_time = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
     user_last_login_time = Column(TIMESTAMP, nullable=True)
+
+    address = relationship("Address", back_populates="user", cascade="all, delete")
+    orders = relationship("Order", back_populates="user", cascade="all, delete")

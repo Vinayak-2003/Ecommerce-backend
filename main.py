@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Callable
 import uvicorn
 from database.base import get_ecommercedatabase_db_conn
@@ -22,6 +23,14 @@ logger = get_logger(__name__)
 # app = FastAPI(lifespan=base_lifespan)
 
 app = FastAPI(title="E-Commerece Backend")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(product_route)
 app.include_router(brand_route)

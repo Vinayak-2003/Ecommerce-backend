@@ -41,6 +41,6 @@ Thumbs.db
 # secrets file
 .env
 
-
+# removed files
 test.py
 features.txt
