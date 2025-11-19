@@ -23,6 +23,8 @@ class PaymentMethod(str, Enum):
     Wallet = 'Wallet'
     Card = 'Card'
 
+def get_enum_values(enum_class):
+    return [member.value for member in enum_class]
 
 class Order(Base):
     __tablename__ = "orders"
@@ -31,8 +33,8 @@ class Order(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False)
     shipping_address_id = Column(UUID(as_uuid=True), ForeignKey("address.address_id"), nullable=False)
     
-    payment_method = Column(SQLEnum(PaymentMethod), default=PaymentMethod.UPI, nullable=False)
-    order_status = Column(SQLEnum(OrderStatus), nullable=False)
+    payment_method = Column(SQLEnum(PaymentMethod, values_callable=get_enum_values), default=PaymentMethod.UPI, nullable=False)
+    order_status = Column(SQLEnum(OrderStatus, values_callable=get_enum_values), nullable=False)
     total_items = Column(Integer, nullable=False)
     total_amount = Column(Float, nullable=False)
     

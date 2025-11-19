@@ -27,3 +27,13 @@ def fetch_current_user(token: str, db_session: Session):
         return UserOut.model_validate(user_details)
     except Exception as e:
         raise e
+    
+def get_current_user_id(token: str):
+    try:
+        payload = jwt.decode(token, settings.JWT_ACCESS_SECRET_KEY, settings.ALGORITHM)
+        current_user_id = payload.get("user_id")
+        logger.info(f"Current User ID fetched for processing")
+        return current_user_id
+    except Exception as e:
+        logger.error(f"An error occurred while fetching current user id: {str(e)}")
+        raise e

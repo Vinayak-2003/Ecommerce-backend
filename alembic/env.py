@@ -6,13 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 from database.base import Base
 
-from src.address.schema import Address
-from src.brand.schema import Brands
-from src.order.schema import OrderItem, Order
-# from ..src.cart.schema import 
-# from ..src.payments.schema import 
-from src.products.schema import Products
-from src.user_auth.schema import User
+from database.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

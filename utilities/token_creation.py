@@ -12,7 +12,8 @@ def create_access_token(subject: Union[dict, Any], expires_delta: int = None) ->
         expires_delta = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_TIME)
     
     to_encode = {
-        "exp": expires_delta, 
+        "user_id": subject.get("user_id"),
+        "exp": expires_delta,
         "sub": subject.get("sub"), 
         "role": subject.get("role")
     }
@@ -27,6 +28,7 @@ def create_refresh_token(subject: Union[dict, Any], expires_delta: int = None) -
         expires_delta = datetime.now(timezone.utc) + timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_TIME)
     
     to_encode = {
+        "user_id": subject.get("user_id"),
         "exp": expires_delta,
         "sub": subject.get("sub"), 
         "role": subject.get("role")

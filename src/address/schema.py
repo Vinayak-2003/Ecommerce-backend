@@ -11,13 +11,16 @@ class AddressType(str, Enum):
     OFFICE = "office"
     OTHER = "other"
 
+def get_enum_values(enum_class):
+    return [member.value for member in enum_class]
+
 class Address(Base):
     __tablename__ = 'address'
 
     address_id = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, unique=True, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False)
     
-    address_type = Column(SQLEnum(AddressType), nullable=False)
+    address_type = Column(SQLEnum(AddressType, values_callable=get_enum_values), nullable=False)
     receiver_name = Column(String(100))
     receiver_email = Column(String(320), nullable=False)
     receiver_contact = Column(String(10), nullable=False)

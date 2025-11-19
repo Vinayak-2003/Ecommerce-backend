@@ -14,7 +14,7 @@ def update_product_controller(product_id, updated_product_data, db_session: Sess
             raise HTTPException(status_code=404, detail="Product not found !!")
         
         updated_product_data_dict = updated_product_data.model_dump(exclude_unset=True)
-        for key, value in updated_product_data_dict.items():\
+        for key, value in updated_product_data_dict.items():
             setattr(stored_product, key, value)
 
         logger.info(f"Data is updated with the new data for product id {product_id}")

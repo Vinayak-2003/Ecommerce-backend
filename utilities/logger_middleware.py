@@ -50,11 +50,11 @@ async def log_request(request: Request, call_next: Callable):
 def setup_logging():
     root_logger = logging.getLogger()
     os.makedirs(os.path.dirname(LOG_FILE_PATH), exist_ok=True)
-    root_logger.setLevel(logging.DEBUG)
+    root_logger.setLevel(logging.INFO)
 
     # creating a rotating a file handler of maxbytes 10MB 
     handler = RotatingFileHandler(LOG_FILE_PATH, mode="a",maxBytes=10*1024*1024, backupCount=1)
-    handler.setLevel(logging.DEBUG)
+    handler.setLevel(logging.INFO)
 
     formatter = logging.Formatter(
         '%(asctime)s | %(name)s | %(levelname)s | %(message)s'

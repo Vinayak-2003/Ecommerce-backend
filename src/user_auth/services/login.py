@@ -31,6 +31,7 @@ def user_login_controller(user_login_details: UserLoginSchema, db_session: Sessi
         
         logger.info(f"User - {user_login_details.username} login successful, creating token")
         token_details = {
+            "user_id": str(fetch_user_details_from_db.user_id),
             "sub": user_login_details.username,
             "role": fetch_user_details_from_db.role
         }
