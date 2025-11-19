@@ -25,6 +25,13 @@ def update_current_user_address(address_id: str, update_address: AddressUpdate,
 
         update_address_dict = update_address.model_dump(exclude_unset=True)
 
+        # marking all address as not default if current address is default
+        if update_address.is_default:
+            db_session.query(Address).filter(
+                Address.user_id == current_user_id,
+                Address.address_id != address_id
+            ).update({Address.is_default: False})
+
         for key, value in update_address_dict.items():
             setattr(stored_address, key, value)
 

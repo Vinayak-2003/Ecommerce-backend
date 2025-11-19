@@ -15,7 +15,13 @@ def create_current_user_address(new_address: AddressCreate,
             user_id = current_user_id,
             **new_address.model_dump()
         )
-        print(type(new_address), "_______________", new_address)
+
+        # marking all address as not default if current address is default
+        if new_address.is_default:
+            db_session.query(Address).filter(
+                Address.user_id == current_user_id
+            ).update({Address.is_default: False})
+
         db_session.add(new_address)
         db_session.commit()
         db_session.refresh(new_address)
