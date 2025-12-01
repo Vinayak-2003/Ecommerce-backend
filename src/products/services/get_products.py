@@ -58,6 +58,6 @@ def fetch_all_paginated_products(page_no, per_page, db_session: Session):
         logger.info(f"Fetched paginated data for products for page number {page_no}")
         return response
     except Exception as e:
-        logger.error("An error raised while fetching products: ", e)
+        logger.error(f"An error raised while fetching products {str(e)}")
         db_session.rollback()
         raise e

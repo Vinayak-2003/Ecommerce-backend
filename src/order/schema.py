@@ -7,15 +7,15 @@ from database.base import Base
 from uuid import uuid4
 
 class OrderStatus(str, Enum):
-    PENDING = 'pending'
-    CONFIRMED = 'confirmed'
-    PACKED = 'packed'
-    OUT_FOR_DELIVERY = 'out_for_delivery'
-    DELIVERED = 'delivered'
-    CANCELLED = 'cancelled'
-    RETURN_REQUESTED = 'return_requested'
-    RETURNED = 'returned'
-    DELAY = 'delay'
+    PENDING = 'PENDING'
+    CONFIRMED = 'CONFIRMED'
+    PACKED = 'PACKED'
+    OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY'
+    DELIVERED = 'DELIVERED'
+    CANCELLED = 'CANCELLED'
+    RETURN_REQUESTED = 'RETURN_REQUESTED'
+    RETURNED = 'RETURNED'
+    DELAY = 'DELAY'
 
 class PaymentMethod(str, Enum):
     COD = 'COD'
@@ -34,7 +34,7 @@ class Order(Base):
     shipping_address_id = Column(UUID(as_uuid=True), ForeignKey("address.address_id"), nullable=False)
     
     payment_method = Column(SQLEnum(PaymentMethod, values_callable=get_enum_values), default=PaymentMethod.UPI, nullable=False)
-    order_status = Column(SQLEnum(OrderStatus, values_callable=get_enum_values), nullable=False)
+    order_status = Column(SQLEnum(OrderStatus, values_callable=get_enum_values), default=OrderStatus.CONFIRMED, nullable=False)
     total_items = Column(Integer, nullable=False)
     total_amount = Column(Float, nullable=False)
     

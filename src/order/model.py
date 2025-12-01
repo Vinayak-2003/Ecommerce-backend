@@ -4,15 +4,15 @@ from typing import List
 from enum import Enum
 
 class OrderStatus(str, Enum):
-    PENDING = 'pending'
-    CONFIRMED = 'confirmed'
-    PACKED = 'packed'
-    OUT_FOR_DELIVERY = 'out_for_delivery'
-    DELIVERED = 'delivered'
-    CANCELLED = 'cancelled'
-    RETURN_REQUESTED = 'return_requested'
-    RETURNED = 'returned'
-    DELAY = 'delay'
+    PENDING = 'PENDING'
+    CONFIRMED = 'CONFIRMED'
+    PACKED = 'PACKED'
+    OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY'
+    DELIVERED = 'DELIVERED'
+    CANCELLED = 'CANCELLED'
+    RETURN_REQUESTED = 'RETURN_REQUESTED'
+    RETURNED = 'RETURNED'
+    DELAY = 'DELAY'
 
 class PaymentMethod(str, Enum):
     COD = 'COD'
@@ -33,11 +33,12 @@ class OrderItemOut(BaseModel):
 
 class OrderCreate(BaseModel):
     items: List[OrderItemCreate]
-    payment_method: PaymentMethod
-    shipping_address_id: UUID4
+    payment_method: PaymentMethod = PaymentMethod.UPI
 
 class OrderUpdate(BaseModel):
-    order_status: OrderStatus | None = None
+    user_id: UUID4
+    order_id: UUID4
+    order_status: OrderStatus
 
 class OrderOut(BaseModel):
     order_id: UUID4
