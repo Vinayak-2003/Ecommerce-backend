@@ -43,3 +43,4 @@ class Products(Base):
     category = Column(SQLEnum(Category), nullable=False)
 
     brand = relationship("Brands", back_populates="products")
+    cart_items = relationship("CartItem", back_populates="product", cascade="all, delete-orphan")

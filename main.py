@@ -12,6 +12,7 @@ from src.user_auth.controller import user_router
 from src.brand.controller import brand_route
 from src.address.controller import address_route
 from src.order.controller import order_route
+from src.cart.controllers import cart_route
 
 import database.models
 
@@ -42,6 +43,7 @@ app.include_router(brand_route)
 app.include_router(user_router)
 app.include_router(address_route)
 app.include_router(order_route)
+app.include_router(cart_route)
 
 @app.middleware("http")
 async def log_req(request: Request, call_next: Callable):

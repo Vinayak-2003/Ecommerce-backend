@@ -29,3 +29,4 @@ class User(Base):
 
     address = relationship("Address", back_populates="user", cascade="all, delete")
     orders = relationship("Order", back_populates="user", cascade="all, delete")
+    cart_items = relationship("CartItem", back_populates="user", cascade="all, delete-orphan")
