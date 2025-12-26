@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from ..schema import Products
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
@@ -6,17 +7,19 @@ from utilities.logger_middleware import get_logger
 
 logger = get_logger(__name__)
 
-def delete_product_controller(product_id, db_session: Session):
+async def delete_product_controller(product_id, db_session: AsyncSession):
     try:
-        stored_product = db_session.query(Products).get(product_id)
+        stored_product_query = await db_session.execute(select(Products).where(Products.product_id == product_id))
+        stored_product = stored_product_query.scalar_one_or_none()
+
         if not stored_product:
             raise HTTPException(status_code=404, detail="Product not found !!")
         
-        db_session.delete(stored_product)
-        db_session.commit()
+        await db_session.delete(stored_product)
+        await db_session.commit()
         logger.info("Data with product ID {product_id} deleted successfully !!")
         return JSONResponse({"details": f"Data with product ID {product_id} deleted successfully !!"})
     except Exception as e:
-        db_session.rollback()
+        await db_session.rollback()
         logger.error("An error raised while deleteing a product data: ", e)
         raise e

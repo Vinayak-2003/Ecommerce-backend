@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from jose import jwt
 from ..model import UserUpdate, UserRoleUpdateAdmin, UserOut
 from ..schema import User
@@ -12,7 +13,7 @@ logger = get_logger(__name__)
 
 settings = get_settings()
 
-def update_current_user(token: str, user_update_details: UserUpdate, db_session: Session):
+async def update_current_user(token: str, user_update_details: UserUpdate, db_session: AsyncSession):
     try:
         payload = jwt.decode(token, settings.JWT_ACCESS_SECRET_KEY, settings.ALGORITHM)
         current_user_email = payload.get("sub")
@@ -24,7 +25,10 @@ def update_current_user(token: str, user_update_details: UserUpdate, db_session:
                 detail="Wrong Credentials !! Missing Username"
             )
         
-        current_user_details = db_session.query(User).filter(User.user_email == current_user_email).first()
+        current_user_details_query = await db_session.execute(select(User).filter(
+            User.user_email == current_user_email))
+        current_user_details = current_user_details_query.scalar_one_or_none()
+
         user_update_details_dict = user_update_details.model_dump(exclude_unset=True)
 
         logger.info("Fetched user details and started updating")
@@ -35,20 +39,23 @@ def update_current_user(token: str, user_update_details: UserUpdate, db_session:
             else:
                 setattr(current_user_details, key, value)
 
-        db_session.commit()
-        db_session.refresh(current_user_details)
+        await db_session.commit()
+        await db_session.refresh(current_user_details)
 
         logger.info(f"Successfully updated and saved user with {current_user_email} updated !!")
         return UserOut.model_validate(current_user_details)
     except Exception as e:
         logger.error("An error raised while updating the user details: ", e)
-        db_session.rollback()
+        await db_session.rollback()
         raise e
     
 
-def update_user_role_by_admin(email: str, user_role_update_details: UserRoleUpdateAdmin, db_session: Session):
+async def update_user_role_by_admin(email: str, user_role_update_details: UserRoleUpdateAdmin, db_session: AsyncSession):
     try:
-        current_user_details = db_session.query(User).filter(User.user_email == email).first()
+        current_user_details_query = await db_session.execute(select(User).filter(
+            User.user_email == email))
+        current_user_details = current_user_details_query.scalar_one_or_none()
+
         logger.info("Started updating user role - access by admin ONLY !!")
 
         current_role = current_user_details.role
@@ -57,8 +64,8 @@ def update_user_role_by_admin(email: str, user_role_update_details: UserRoleUpda
         
         current_user_details.role = updated_role
 
-        db_session.commit()
-        db_session.refresh(current_user_details)
+        await db_session.commit()
+        await db_session.refresh(current_user_details)
         user_out = UserOut.model_validate(current_user_details)
 
         logger.info(f"Successfully updated and saved user role - access by admin ONLY !!")
@@ -69,5 +76,5 @@ def update_user_role_by_admin(email: str, user_role_update_details: UserRoleUpda
         )
     except Exception as e:
         logger.error("An error raised while updating user role - access by admin ONLY !!: ", e)
-        db_session.rollback()
+        await db_session.rollback()
         raise e

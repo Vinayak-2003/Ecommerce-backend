@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from ..model import UserLoginSchema, TokenSchema, UserOut
 from ..schema import User
 from utilities.password_validation import verify_password
@@ -8,9 +9,12 @@ from utilities.logger_middleware import get_logger
 
 logger = get_logger(__name__)
 
-def user_login_controller(user_login_details: UserLoginSchema, db_session: Session):
+async def user_login_controller(user_login_details: UserLoginSchema, db_session: AsyncSession):
     try:
-        fetch_user_details_from_db = db_session.query(User).filter(User.user_email == user_login_details.username).first()
+        fetch_user_details_from_db_query = await db_session.execute(select(User).where(
+            User.user_email == user_login_details.username))
+        fetch_user_details_from_db = fetch_user_details_from_db_query.scalar_one_or_none()
+
         if fetch_user_details_from_db is None:
             logger.error(f"User with the current user credentials, username {user_login_details.username} does not exists !!")
             raise HTTPException(
@@ -46,5 +50,5 @@ def user_login_controller(user_login_details: UserLoginSchema, db_session: Sessi
         )
     except Exception as e:
         logger.error("An error raised while user login: ", e)
-        db_session.rollback()
+        await db_session.rollback()
         raise e

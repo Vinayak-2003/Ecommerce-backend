@@ -1,5 +1,6 @@
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from jose import jwt
 from config import get_settings
 from ..schema import User
@@ -10,7 +11,7 @@ logger = get_logger(__name__)
 
 settings = get_settings()
 
-def fetch_current_user(token: str, db_session: Session):
+async def fetch_current_user(token: str, db_session: AsyncSession):
     try:
         payload = jwt.decode(token, settings.JWT_ACCESS_SECRET_KEY, settings.ALGORITHM)
         current_user_email = payload.get("sub")
@@ -22,13 +23,15 @@ def fetch_current_user(token: str, db_session: Session):
                 detail="Wrong Credentials !! Missing Username"
             )
         
-        user_details = db_session.query(User).filter(User.user_email == current_user_email).first()
+        user_details_query = await db_session.execute(select(User).where(User.user_email == current_user_email))
+        user_details = user_details_query.scalar_one_or_none()
+        
         logger.info(f"Successfully fetched the active user details")
         return UserOut.model_validate(user_details)
     except Exception as e:
         raise e
     
-def get_current_user_id(token: str):
+async def get_current_user_id(token: str):
     try:
         payload = jwt.decode(token, settings.JWT_ACCESS_SECRET_KEY, settings.ALGORITHM)
         current_user_id = payload.get("user_id")
