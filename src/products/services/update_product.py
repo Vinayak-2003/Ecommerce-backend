@@ -17,6 +17,10 @@ async def update_product_controller(product_id, updated_product_data, db_session
             raise HTTPException(status_code=404, detail="Product not found !!")
         
         updated_product_data_dict = updated_product_data.model_dump(exclude_unset=True)
+
+        if not updated_product_data_dict:
+            raise HTTPException(detail=f"No fields are provided for update !!")
+
         for key, value in updated_product_data_dict.items():
             setattr(stored_product, key, value)
 
@@ -28,5 +32,5 @@ async def update_product_controller(product_id, updated_product_data, db_session
         return stored_product
     except Exception as e:
         await db_session.rollback()
-        logger.error("An error raised while updating product data: ", e)
+        logger.error(f"An error raised while updating product data: {str(e)}")
         raise e

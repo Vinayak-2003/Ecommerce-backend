@@ -11,9 +11,9 @@ async def create_new_product_controller(new_product_data: ProductCreate, db_sess
         db_session.add(new_product)
         await db_session.commit()
         await db_session.refresh(new_product)
-        logger.info("fetched new data and inserted into db", new_product)
+        logger.info("fetched new data and inserted into db")
         return new_product
     except Exception as e:
         await db_session.rollback()
-        logger.error("An error raised while creating a new product data: ", e)
+        logger.error(f"An error raised while creating a new product data: {str(e)}")
         raise e

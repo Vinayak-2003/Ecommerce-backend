@@ -23,7 +23,7 @@ async def create_current_user_address(new_address: AddressCreate,
                 Address.user_id == current_user_id
             ).values(is_default = False))
 
-        await db_session.add(new_address)
+        db_session.add(new_address)
         await db_session.commit()
         await db_session.refresh(new_address)
         logger.info(f"An address is created for {current_user_id}")

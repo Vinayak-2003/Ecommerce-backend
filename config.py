@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_TIME: int = 2 * 24 * 60
     ALGORITHM: str = "HS256"
 
+    SUPABASE_PROJECT_URL: str
+    SUPABASE_API_KEY: str
+    SUPABASE_USER_ID: str
+    SUPABASE_HOST: str
+    SUPABASE_DB_PASSWORD: str
+    SUPABASE_DATABASE_NAME: str
+
     model_config = SettingsConfigDict(env_file=".env")
 
 

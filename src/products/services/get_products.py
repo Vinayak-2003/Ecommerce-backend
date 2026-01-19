@@ -1,20 +1,27 @@
+from fastapi.responses import JSONResponse
 from ..schema import Products
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, and_, func
 from utilities.logger_middleware import get_logger
 
 logger = get_logger(__name__)
 
+
 async def fetch_product_by_id_controller(product_id, db_session: AsyncSession):
     try:
-        product_data_id = await db_session.execute(select(Products).where(Products.product_id == product_id))
+        product_data_id = await db_session.execute(
+            select(Products).where(Products.product_id == product_id)
+        )
         result = product_data_id.scalar_one_or_none()
+
+        if result is None:
+            logger.info(f"No product found for {product_id}")
+            return JSONResponse(content=f"No product found for {product_id}", status_code=404)
         
         logger.info(f"Data fetched for product id {product_id} successfully !!")
         return result
     except Exception as e:
         logger.error("An error raised while fetching a product by id: ", e)
-        await db_session.rollback()
         raise e
 
 async def fetch_product_by_name_customization_controller(product_name, category, min_price, max_price, db_session: AsyncSession):
@@ -34,12 +41,15 @@ async def fetch_product_by_name_customization_controller(product_name, category,
         result = await db_session.execute(product_data_name_query)
         products = result.scalars().all()
 
+        if products == []:
+            logger.info(f"No product found for {product_name}")
+            return JSONResponse(content=f"No product found for {product_name}", status_code=404)
+
         logger.info(f"Custimization query processed: {product_data_name_query}")
         logger.info(f"Data fetched for product id {product_name} successfully !!")
         return products
     except Exception as e:
-        logger.error("An error raised while fetching a product by customized filters: ", e)
-        await db_session.rollback()
+        logger.error(f"An error raised while fetching a product by customized filters: {str(e)}")
         raise e
 
 async def fetch_all_paginated_products(page_no, per_page, db_session: AsyncSession):
@@ -59,7 +69,7 @@ async def fetch_all_paginated_products(page_no, per_page, db_session: AsyncSessi
             "items": product_for_page,
             "total": total,
             "page": page_no,
-            "per page": per_page,
+            "per_page": per_page,
             "pages": pages
         }
 
@@ -67,5 +77,4 @@ async def fetch_all_paginated_products(page_no, per_page, db_session: AsyncSessi
         return response
     except Exception as e:
         logger.error(f"An error raised while fetching products {str(e)}")
-        await db_session.rollback()
         raise e

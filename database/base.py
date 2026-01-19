@@ -13,12 +13,13 @@ Base = declarative_base()
 settings = get_settings()
 
 DATABASE_URL = "postgresql+asyncpg://{0}:{1}@{2}:{3}/{4}".format(
-                settings.DATABASE_USER, 
-                settings.DATABASE_PASSWORD, 
-                settings.DATABASE_HOST, 
-                settings.DATABASE_PORT, 
-                settings.DATABASE_NAME
-            )
+                    settings.SUPABASE_USER_ID, 
+                    settings.SUPABASE_DB_PASSWORD, 
+                    settings.SUPABASE_HOST, 
+                    settings.DATABASE_PORT, 
+                    settings.SUPABASE_DATABASE_NAME
+                )
+print("DATABASE_URL:", DATABASE_URL)
 engine = None
 async_session_factory = None
 
