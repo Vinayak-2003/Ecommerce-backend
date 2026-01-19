@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func
 
 from ...user_auth.services.current_user import get_current_user_id
 from utilities.logger_middleware import get_logger
@@ -7,14 +8,14 @@ from ..schemas import CartItem
 
 logger = get_logger(__name__)
 
-def fetch_cart_current_user(page_no: int, per_page: int, token: str, db_session: Session):
+async def fetch_cart_current_user(page_no: int, per_page: int, token: str, db_session: AsyncSession):
     try:
-        current_user_id = get_current_user_id(token)
-        total_current_user_cart = db_session.query(CartItem).filter(
+        current_user_id = await get_current_user_id(token)
+        total_current_user_cart_query = await db_session.execute(select(func.count()).select_from(
             CartItem.user_id == current_user_id
-        ).count()
+        ))
+        total_current_user_cart = total_current_user_cart_query.scalar_one_or_none()
 
-        print("__________total_current_user_cart____________", total_current_user_cart)
         if total_current_user_cart is None:
             logger.info(f"Cart is empty for current user {current_user_id}")
             return {
@@ -25,7 +26,8 @@ def fetch_cart_current_user(page_no: int, per_page: int, token: str, db_session:
                 "per_page": per_page
             }
 
-        current_user_cart_page = db_session.query(CartItem).offset((page_no-1)*per_page).limit(per_page).all()
+        current_user_cart_page_query = await db_session.execute(select(CartItem).offset((page_no-1)*per_page).limit(per_page))
+        current_user_cart_page = current_user_cart_page_query.scalars().all()
 
         total_pages = (total_current_user_cart + per_page - 1) // per_page
 

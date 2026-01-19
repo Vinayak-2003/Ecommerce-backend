@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from fastapi import status, HTTPException
 
 from ..schema import Order, OrderItem
@@ -11,15 +12,16 @@ from utilities.logger_middleware import get_logger
 
 logger = get_logger(__name__)
 
-def create_order_current_user(new_order, token, db_session: Session):
+async def create_order_current_user(new_order, token, db_session: AsyncSession):
     try:
-        current_user_id = get_current_user_id(token)
+        current_user_id = await get_current_user_id(token)
 
         # fetch current used default address id
-        default_address_id_current_user = db_session.query(Address).filter(
+        default_address_id_current_user_query = await db_session.execute(select(Address).where(
             Address.user_id == current_user_id,
             Address.is_default == True
-        ).one_or_none()
+        ))
+        default_address_id_current_user = default_address_id_current_user_query.scalar_one_or_none()
 
         if not default_address_id_current_user:
             logger.error(f"Does not found any default address")
@@ -27,7 +29,7 @@ def create_order_current_user(new_order, token, db_session: Session):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Default address not found !!"
             )
-        logger.info(f"dafualt address ID is {default_address_id_current_user.address_id}")
+        logger.info(f"defualt address ID is {default_address_id_current_user.address_id}")
         
         # manageing new order and order items for db
         new_order_dict = new_order.model_dump()
@@ -45,7 +47,8 @@ def create_order_current_user(new_order, token, db_session: Session):
         order_items_data = []
 
         for id, qty in merged_items_dict.items():
-            product_data = db_session.query(Products).filter(Products.product_id == id).one_or_none()
+            product_data_query = await db_session.execute(select(Products).where(Products.product_id == id))
+            product_data = product_data_query.scalar_one_or_none()
 
             if product_data is None:
                 logger.error(f"Does not found product with product id - {id}")
@@ -85,20 +88,20 @@ def create_order_current_user(new_order, token, db_session: Session):
         )
 
         db_session.add(new_order_complete_dict)
-        db_session.flush()              # generate order_id
+        await db_session.flush()              # generate order_id
 
         # attach order_id in order item object
         for order_item in order_items_data:
             order_item.order_id = new_order_complete_dict.order_id
             db_session.add(order_item)
 
-        db_session.commit()
-        db_session.refresh(new_order_complete_dict)
+        await db_session.commit()
+        await db_session.refresh(new_order_complete_dict)
         logger.info("New order created successfully !!")
         return new_order_complete_dict
     except Exception as e:
         logger.error(f"An error occurred while creating a new order for {current_user_id}: {str(e)}")
-        db_session.rollback()
+        await db_session.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Unexpected error: {str(e)}"
