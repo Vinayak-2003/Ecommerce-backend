@@ -41,6 +41,7 @@ class ProductCreate(BaseModel):
     status: ProductStatus
     brand_id: str
     category: Category
+    product_image: str
 
 class ProductOut(ProductCreate):
     product_id: UUID4

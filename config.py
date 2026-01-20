@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     DATABASE_PORT: int = 5432
     DATABASE_NAME: str
 
+    ALLOWED_ORIGINS: list[str]
+
     JWT_ACCESS_SECRET_KEY: str
     JWT_REFRESH_SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_TIME: int = 30

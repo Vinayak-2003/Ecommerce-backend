@@ -40,7 +40,9 @@ class Products(Base):
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     brand_id = Column(String, ForeignKey("brands.brand_id"), nullable=False)
-    category = Column(SQLEnum(Category), nullable=False)
+    category = Column(SQLEnum(Category), nullable=True)
+
+    product_image = Column(String, nullable=False)
 
     brand = relationship("Brands", back_populates="products")
     cart_items = relationship("CartItem", back_populates="product", cascade="all, delete-orphan")
