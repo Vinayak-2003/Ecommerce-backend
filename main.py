@@ -17,17 +17,13 @@ from src.cart.controllers import cart_route
 import database.models
 from database.base import init_db, close_db
 
+from config import get_settings
+
+settings = get_settings()
+
+
 setup_logging()
 logger = get_logger(__name__)
-
-# for early project setup - creation of tables, super quick
-# @asynccontextmanager
-# async def base_lifespan(app: FastAPI):
-#     engine = get_ecommercedatabase_db_conn()
-#     Base.metadata.create_all(bind=engine)
-#     yield
-
-# app = FastAPI(lifespan=base_lifespan)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
