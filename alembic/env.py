@@ -8,6 +8,11 @@ from database.base import Base
 
 from database.models import *
 
+from config import get_settings
+settings = get_settings()
+
+
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -28,6 +33,15 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+def get_database_url():
+    return "postgresql://{0}:{1}@{2}:{3}/{4}".format(
+                    settings.SUPABASE_USER_ID, 
+                    settings.SUPABASE_DB_PASSWORD, 
+                    settings.SUPABASE_HOST, 
+                    settings.DATABASE_PORT, 
+                    settings.SUPABASE_DATABASE_NAME
+                )
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -41,7 +55,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = get_database_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -60,6 +74,9 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    configuration = config.get_section(config.config_ini_section)
+    configuration["sqlalchemy.url"] = get_database_url()
+    
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
