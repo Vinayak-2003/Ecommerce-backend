@@ -8,11 +8,12 @@ from contextlib import asynccontextmanager
 from utilities.logger_middleware import log_request, setup_logging, get_logger
 
 from src.products.controller import product_route
-from src.user_auth.controller import user_router
+from src.user.controller import user_router
 from src.brand.controller import brand_route
 from src.address.controller import address_route
 from src.order.controller import order_route
 from src.cart.controllers import cart_route
+from src.auth.controller import auth_router
 
 import database.models
 from database.base import init_db, close_db
@@ -57,6 +58,7 @@ app.include_router(user_router)
 app.include_router(address_route)
 app.include_router(order_route)
 app.include_router(cart_route)
+app.include_router(auth_router)
 
 @app.middleware("http")
 async def log_req(request: Request, call_next: Callable):

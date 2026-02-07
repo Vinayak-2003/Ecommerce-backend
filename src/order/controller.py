@@ -3,7 +3,7 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .model import OrderCreate, OrderOut, OrderUpdate
-from ..user_auth.controller import oauth2_scheme
+from ..auth.controller import oauth2_scheme
 from database.base import get_db_session
 
 from .services.get_order import fetch_all_paginated_orders, fetch_current_user_order_by_id

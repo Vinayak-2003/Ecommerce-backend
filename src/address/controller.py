@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from typing import Annotated, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from .model import AddressCreate, AddressOut, AddressUpdate
-from ..user_auth.controller import oauth2_scheme
+from ..auth.controller import oauth2_scheme
 
 from .services.all_address_current_user import all_current_user_addresses
 from .services.create_address_current_user import create_current_user_address

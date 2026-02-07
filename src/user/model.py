@@ -10,7 +10,7 @@ class UserRoles(str, Enum):
 
 class UserCreate(BaseModel):
     user_email: EmailStr
-    user_contact: Annotated[str, Field(pattern=r'^\+?[1-9]\d{1,14}$')]
+    user_contact: Annotated[str, Field(pattern=r'^\+?[1-9]\d{1,14}$')] = Field(..., min_length=10, max_length=15)
     password: str
 
 class UserOut(BaseModel):
@@ -27,7 +27,7 @@ class UserOut(BaseModel):
     }
 
 class UserUpdate(BaseModel):
-    user_contact: Annotated[str | None, Field(pattern=r'^\+?[1-9]\d{1,14}$')] = None
+    user_contact: Annotated[str | None, Field(pattern=r'^\+?[1-9]\d{1,14}$')] = Field(..., min_length=10, max_length=15)
     password: str | None = None
     
 class UserRoleUpdateAdmin(BaseModel):
@@ -37,7 +37,3 @@ class UserLoginSchema(BaseModel):
     user_email: EmailStr
     password: str
 
-class TokenSchema(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str = "Bearer"

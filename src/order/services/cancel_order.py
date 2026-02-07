@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi import status, HTTPException
 
 from ..schema import Order
-from ...user_auth.services.current_user import get_current_user_id
+from ...user.services.current_user import get_current_user_id
 from utilities.logger_middleware import get_logger
 
 logger = get_logger(__name__)

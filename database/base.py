@@ -19,7 +19,7 @@ DATABASE_URL = "postgresql+asyncpg://{0}:{1}@{2}:{3}/{4}".format(
                     settings.DATABASE_PORT, 
                     settings.SUPABASE_DATABASE_NAME
                 )
-print("DATABASE_URL:", DATABASE_URL)
+
 engine = None
 async_session_factory = None
 

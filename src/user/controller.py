@@ -1,18 +1,14 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 from .model import (UserOut, 
                     UserCreate, 
                     UserUpdate, 
-                    TokenSchema, 
-                    UserLoginSchema, 
                     UserRoleUpdateAdmin
                 )
 from database.base import get_db_session
 
-from .services.signup import create_user_signup
-from .services.login import user_login_controller
+from ..auth.controller import oauth2_scheme
 from .services.get_user import get_user_by_email_controller
 from .services.current_user import fetch_current_user
 from .services.update_user import update_current_user, update_user_role_by_admin
@@ -24,21 +20,6 @@ user_router = APIRouter(
     prefix="/api/v1/users",
     tags=["Users"]
 )
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/users/login")
-
-# User Post - SignUp and Signin
-@user_router.post("/signup")
-async def new_user_signup(new_user_data: UserCreate,
-                    db: AsyncSession = Depends(get_db_session)
-                ):
-    return await create_user_signup(new_user_data, db)
-
-@user_router.post("/login", response_model=TokenSchema)
-async def user_login(user_details: Annotated[OAuth2PasswordRequestForm, Depends()],
-               db: AsyncSession = Depends(get_db_session)
-            ):
-    return await user_login_controller(user_details, db)
 
 # user Get
 @user_router.get("/me", response_model=UserOut)
@@ -78,4 +59,4 @@ async def update_user_role_details(email: str,
 async def delete_user(email: str,
                 db: AsyncSession = Depends(get_db_session)
             ):
-    re
+    return await delete_user_by_email(email, db)

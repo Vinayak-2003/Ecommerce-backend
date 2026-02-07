@@ -3,7 +3,7 @@ from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import CartItemCreate, CartItemOut, CartItemUpdate
-from ..user_auth.controller import oauth2_scheme
+from ..auth.controller import oauth2_scheme
 from database.base import get_db_session
 
 from .services.create_cart import create_cart_current_user

@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from jose import jwt
+from jose import jwt, JWTError
 from config import get_settings
 from ..schema import User
 from ..model import UserOut
@@ -28,7 +28,15 @@ async def fetch_current_user(token: str, db_session: AsyncSession):
         
         logger.info(f"Successfully fetched the active user details")
         return UserOut.model_validate(user_details)
+    except JWTError:
+        logger.error(f"Could not validate credentials while fetching current user")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except Exception as e:
+        logger.error(f"An error occurred while fetching current user id: {str(e)}")
         raise e
     
 async def get_current_user_id(token: str):
@@ -37,6 +45,13 @@ async def get_current_user_id(token: str):
         current_user_id = payload.get("user_id")
         logger.info(f"Current User ID fetched for processing")
         return current_user_id
+    except JWTError:
+        logger.error(f"Could not validate credentials while fetching current user id")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except Exception as e:
         logger.error(f"An error occurred while fetching current user id: {str(e)}")
         raise e

@@ -7,7 +7,7 @@ from ...address.schema import Address
 from ...products.schema import Products
 from ...products.model import ProductUpdate
 from ...products.services.update_product import update_product_controller
-from ...user_auth.services.current_user import get_current_user_id
+from ...user.services.current_user import get_current_user_id
 from utilities.logger_middleware import get_logger
 
 logger = get_logger(__name__)
