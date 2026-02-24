@@ -1,6 +1,15 @@
+"""
+Configuration management for the E-Commerce Backend.
+This module defines the application settings using Pydantic's BaseSettings.
+"""
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
+    """
+    Application settings class.
+    Loads configuration from environment variables or a .env file.
+    """
     DATABASE_USER: str
     DATABASE_PASSWORD: str
     DATABASE_HOST: str = "127.0.0.1"
@@ -26,4 +35,7 @@ class Settings(BaseSettings):
 
 
 def get_settings():
+    """
+    Dependency to get the application settings instance.
+    """
     return Settings()

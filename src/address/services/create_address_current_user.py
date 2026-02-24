@@ -1,34 +1,47 @@
+"""
+Service module for creating a new shipping address for the authenticated user.
+"""
+from fastapi import HTTPException, status
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from ..model import AddressCreate, AddressOut
-from ..schema import Address
-from ...user.services.current_user import get_current_user_id
+
 from utilities.logger_middleware import get_logger
+
+from ...user.services.current_user import get_current_user_id
+from ..model import AddressCreate
+from ..schema import Address
 
 logger = get_logger(__name__)
 
-async def create_current_user_address(new_address: AddressCreate,
-                                token: str,
-                                db_session: AsyncSession):
+
+async def create_current_user_address(
+    new_address: AddressCreate, token: str, db_session: AsyncSession
+):
+    """
+    Creates a new shipping address for the currently authenticated user.
+    If the new address is set as default, it unsets existing default addresses.
+    """
     try:
         current_user_id = await get_current_user_id(token)
-        new_address = Address(
-            user_id = current_user_id,
-            **new_address.model_dump()
-        )
+        address_entry = Address(user_id=current_user_id, **new_address.model_dump())
 
-        # marking all address as not default if current address is default
-        if new_address.is_default:
-            await db_session.execute(select(Address).where(
-                Address.user_id == current_user_id
-            ).values(is_default = False))
+        # marking all addresses as not default if new address is default
+        if address_entry.is_default:
+            await db_session.execute(
+                update(Address)
+                .where(Address.user_id == current_user_id)
+                .values(is_default=False)
+            )
 
-        db_session.add(new_address)
+        db_session.add(address_entry)
         await db_session.commit()
-        await db_session.refresh(new_address)
-        logger.info(f"An address is created for {current_user_id}")
-        return new_address
-    except Exception as e:
-        logger.error(f"An error occurred while creating a new address for {current_user_id}: {str(e)}")
+        await db_session.refresh(address_entry)
+        logger.info(f"Successfully created address ID {address_entry.address_id} for user {current_user_id}")
+        return address_entry
+    except Exception:
+        logger.exception("An error occurred while creating a new address")
         await db_session.rollback()
-        raise e
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error"
+        )

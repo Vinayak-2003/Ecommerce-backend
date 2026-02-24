@@ -1,16 +1,13 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from config import get_settings
 from database.base import Base
-
 from database.models import *
 
-from config import get_settings
 settings = get_settings()
-
 
 
 # this is the Alembic Config object, which provides
@@ -33,14 +30,15 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+
 def get_database_url():
     return "postgresql://{0}:{1}@{2}:{3}/{4}".format(
-                    settings.SUPABASE_USER_ID, 
-                    settings.SUPABASE_DB_PASSWORD, 
-                    settings.SUPABASE_HOST, 
-                    settings.DATABASE_PORT, 
-                    settings.SUPABASE_DATABASE_NAME
-                )
+        settings.SUPABASE_USER_ID,
+        settings.SUPABASE_DB_PASSWORD,
+        settings.SUPABASE_HOST,
+        settings.DATABASE_PORT,
+        settings.SUPABASE_DATABASE_NAME,
+    )
 
 
 def run_migrations_offline() -> None:
@@ -76,7 +74,7 @@ def run_migrations_online() -> None:
     """
     configuration = config.get_section(config.config_ini_section)
     configuration["sqlalchemy.url"] = get_database_url()
-    
+
     connectable = engine_from_config(
         configuration,
         prefix="sqlalchemy.",
@@ -84,9 +82,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

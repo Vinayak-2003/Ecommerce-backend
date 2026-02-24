@@ -1,57 +1,103 @@
-from sqlalchemy import Column, String, Integer, Float, ForeignKey, Boolean, TIMESTAMP, func
+"""
+Database models for order-related data.
+Includes the Order and OrderItem models and their relationships.
+"""
+from enum import Enum
+from uuid import uuid4
+
+from sqlalchemy import (TIMESTAMP, Boolean, Column, Float, ForeignKey, Integer,
+                        String, func)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLEnum
-from enum import Enum
+
 from database.base import Base
-from uuid import uuid4
+
 
 class OrderStatus(str, Enum):
-    PENDING = 'PENDING'
-    CONFIRMED = 'CONFIRMED'
-    PACKED = 'PACKED'
-    OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY'
-    DELIVERED = 'DELIVERED'
-    CANCELLED = 'CANCELLED'
-    RETURN_REQUESTED = 'RETURN_REQUESTED'
-    RETURNED = 'RETURNED'
-    DELAY = 'DELAY'
+    """
+    Enumeration of possible order statuses.
+    """
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    PACKED = "PACKED"
+    OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY"
+    DELIVERED = "DELIVERED"
+    CANCELLED = "CANCELLED"
+    RETURN_REQUESTED = "RETURN_REQUESTED"
+    RETURNED = "RETURNED"
+    DELAY = "DELAY"
+
 
 class PaymentMethod(str, Enum):
-    COD = 'COD'
-    UPI = 'UPI'
-    Wallet = 'Wallet'
-    Card = 'Card'
+    """
+    Enumeration of supported payment methods.
+    """
+    COD = "COD"
+    UPI = "UPI"
+    Wallet = "Wallet"
+    Card = "Card"
+
 
 def get_enum_values(enum_class):
+    """
+    Helper function to extract values from an Enum class.
+    """
     return [member.value for member in enum_class]
 
+
 class Order(Base):
+    """
+    SQLAlchemy model representing a customer order.
+    """
     __tablename__ = "orders"
 
-    order_id = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, nullable=False, unique=True)
+    order_id = Column(
+        UUID(as_uuid=True), default=uuid4, primary_key=True, nullable=False, unique=True
+    )
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=False)
-    shipping_address_id = Column(UUID(as_uuid=True), ForeignKey("address.address_id"), nullable=False)
-    
-    payment_method = Column(SQLEnum(PaymentMethod, values_callable=get_enum_values), default=PaymentMethod.UPI, nullable=False)
-    order_status = Column(SQLEnum(OrderStatus, values_callable=get_enum_values), default=OrderStatus.CONFIRMED, nullable=False)
+    shipping_address_id = Column(
+        UUID(as_uuid=True), ForeignKey("address.address_id"), nullable=False
+    )
+
+    payment_method = Column(
+        SQLEnum(PaymentMethod, values_callable=get_enum_values),
+        default=PaymentMethod.UPI,
+        nullable=False,
+    )
+    order_status = Column(
+        SQLEnum(OrderStatus, values_callable=get_enum_values),
+        default=OrderStatus.CONFIRMED,
+        nullable=False,
+    )
     total_items = Column(Integer, nullable=False)
     total_amount = Column(Float, nullable=False)
-    
-    order_placed_datetime = Column(TIMESTAMP, server_default=func.now(), nullable=False)
-    order_updated_datetime = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+    order_placed_datetime = Column(TIMESTAMP, server_default=func.now(), nullable=False)
+    order_updated_datetime = Column(
+        TIMESTAMP, server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+    items = relationship(
+        "OrderItem", back_populates="order", cascade="all, delete-orphan"
+    )
     user = relationship("User", back_populates="orders")
 
 
 class OrderItem(Base):
+    """
+    SQLAlchemy model representing an individual item within an order.
+    """
     __tablename__ = "order_items"
 
-    order_item_id = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, nullable=False)
+    order_item_id = Column(
+        UUID(as_uuid=True), default=uuid4, primary_key=True, nullable=False
+    )
     order_id = Column(UUID(as_uuid=True), ForeignKey("orders.order_id"), nullable=False)
-    product_id = Column(UUID(as_uuid=True), ForeignKey("products.product_id"), nullable=False)
-    
+    product_id = Column(
+        UUID(as_uuid=True), ForeignKey("products.product_id"), nullable=False
+    )
+
     product_name = Column(String(100), nullable=False)
     price_at_purchase = Column(Float, nullable=False)
     quantity = Column(Integer, nullable=False)

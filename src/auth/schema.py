@@ -1,10 +1,18 @@
-from sqlalchemy import Column, String, TIMESTAMP, func, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+"""
+Database models for authentication-related data.
+Includes the RefreshToken model for managing user sessions.
+"""
+from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from database.base import Base
 
+
 class RefreshToken(Base):
+    """
+    SQLAlchemy model for storing refresh tokens.
+    """
     __tablename__ = "refresh_tokens"
 
     token = Column(String, primary_key=True, nullable=False, unique=True)
