@@ -78,7 +78,8 @@ def create_new_refresh_token():
     Generates a random UUID-based refresh token and its expiration metadata.
     """
     new_refresh_token = str(uuid4())
-    expires_delta = datetime.now(timezone.utc) + timedelta(
+    # Create timezone-naive datetime for database compatibility
+    expires_delta = datetime.now() + timedelta(
         minutes=settings.REFRESH_TOKEN_EXPIRE_TIME
     )
 
